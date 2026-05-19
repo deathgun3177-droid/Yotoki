@@ -11,7 +11,7 @@ export function LatestEpisodeRow({ episode }: { episode: LatestEpisode }) {
     <motion.article whileHover={{ x: 3 }} transition={{ duration: 0.16 }}>
       <Link
         href={`/watch/${episode.mediaSlug}/${episode.number}`}
-        className="soft-border group grid grid-cols-[120px_1fr] overflow-hidden rounded-lg bg-white/[0.035] transition hover:border-teal-300/35 hover:bg-white/[0.06] sm:grid-cols-[150px_1fr]"
+        className="soft-border group grid grid-cols-[104px_minmax(0,1fr)] overflow-hidden rounded-lg bg-white/[0.035] transition hover:border-teal-300/35 hover:bg-white/[0.06] sm:grid-cols-[150px_1fr]"
       >
         <div className="relative aspect-video">
           <Image src={episode.thumbnail || episode.poster} alt="" fill className="object-cover" sizes="150px" />
@@ -21,10 +21,10 @@ export function LatestEpisodeRow({ episode }: { episode: LatestEpisode }) {
             </span>
           </div>
         </div>
-        <div className="min-w-0 p-3 sm:p-4">
-          <p className="truncate text-xs font-semibold uppercase tracking-[0.16em] text-teal-200">{episode.mediaTitle}</p>
-          <h3 className="mt-1 truncate font-medium text-white">{episode.title}</h3>
-          <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-semibold uppercase tracking-[0.12em]">
+        <div className="min-w-0 p-2.5 sm:p-4">
+          <p className="truncate text-[11px] font-semibold uppercase tracking-[0.14em] text-teal-200 sm:text-xs sm:tracking-[0.16em]">{episode.mediaTitle}</p>
+          <h3 className="mt-1 truncate text-sm font-medium text-white sm:text-base">{episode.title}</h3>
+          <div className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] sm:mt-3 sm:gap-2 sm:text-[11px] sm:tracking-[0.12em]">
             <span className="rounded bg-white/8 px-2 py-1 text-slate-300">EP {episode.number}</span>
             <span className="rounded bg-white/8 px-2 py-1 text-slate-300">{episode.quality}</span>
             <span className="rounded bg-amber-300/14 px-2 py-1 text-amber-100">SUB</span>

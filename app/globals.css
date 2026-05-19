@@ -13,12 +13,16 @@
 }
 
 html {
+  max-width: 100%;
+  overflow-x: hidden;
   scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
+  max-width: 100%;
   min-height: 100vh;
+  overflow-x: hidden;
   background:
     linear-gradient(180deg, rgba(20, 17, 34, 0.78), rgba(5, 5, 6, 0.82) 34%, #050506 100%),
     #050506;
@@ -41,6 +45,12 @@ textarea {
 img,
 video {
   max-width: 100%;
+}
+
+main {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .yotoki-video::cue {
@@ -119,6 +129,21 @@ video {
     radial-gradient(circle at 16% 4%, rgba(124, 58, 237, 0.18), transparent 28rem),
     radial-gradient(circle at 78% 9%, rgba(45, 212, 191, 0.12), transparent 22rem),
     linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 24rem);
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .cinema-shell {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  .yotoki-hero,
+  .yotoki-hero-content {
+    min-height: 20rem;
+  }
 }
 
 .soft-border {

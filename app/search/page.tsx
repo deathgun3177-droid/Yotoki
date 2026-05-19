@@ -15,9 +15,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const results = await searchTitles(q);
 
   return (
-    <main className="cinema-shell min-h-screen bg-[#050506]">
+    <main className="cinema-shell min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-[#050506]">
       <SiteHeader initialQuery={q} />
-      <div className="mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-7xl px-4 pb-[calc(4rem+env(safe-area-inset-bottom))] pt-6 sm:px-6 sm:pb-16 lg:px-8">
         <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm font-medium uppercase tracking-[0.22em] text-teal-200/70">Хайлт</p>
@@ -29,7 +29,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         </div>
 
         {results.length ? (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-6">
             {results.map((title) => (
               <MediaCard key={title.id} title={title} />
             ))}

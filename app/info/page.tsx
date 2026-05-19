@@ -4,9 +4,9 @@ import { SiteHeader } from "@/components/site-header";
 
 export default function InfoPage() {
   return (
-    <main className="cinema-shell min-h-screen bg-[#050506]">
+    <main className="cinema-shell min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-[#050506]">
       <SiteHeader />
-      <div className="mx-auto w-full max-w-4xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-4xl px-4 pb-[calc(4rem+env(safe-area-inset-bottom))] pt-6 sm:px-6 sm:pb-16 sm:pt-8 lg:px-8">
         <section className="soft-border overflow-hidden rounded-lg bg-white/[0.04]">
           <div className="border-b border-white/8 p-5 sm:p-7">
             <p className="text-sm font-medium uppercase tracking-[0.22em] text-teal-200/70">YotoKi</p>

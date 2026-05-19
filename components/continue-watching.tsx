@@ -17,7 +17,7 @@ export function ContinueWatching() {
   }
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
       {items.slice(0, 4).map((item) => {
         const percent = item.duration > 0 ? Math.min(100, Math.round((item.currentTime / item.duration) * 100)) : 0;
 
@@ -33,10 +33,10 @@ export function ContinueWatching() {
                 <div className="h-full bg-teal-300" style={{ width: `${percent}%` }} />
               </div>
             </div>
-            <div className="p-3">
-              <p className="truncate text-xs font-semibold uppercase tracking-[0.16em] text-teal-200">EP {item.episodeNumber}</p>
-              <h3 className="mt-1 truncate font-medium text-white">{item.mediaTitle}</h3>
-              <p className="mt-1 truncate text-sm text-slate-500">{item.episodeTitle}</p>
+            <div className="p-2.5 sm:p-3">
+              <p className="truncate text-[11px] font-semibold uppercase tracking-[0.14em] text-teal-200 sm:text-xs sm:tracking-[0.16em]">EP {item.episodeNumber}</p>
+              <h3 className="mt-1 truncate text-sm font-medium text-white sm:text-base">{item.mediaTitle}</h3>
+              <p className="mt-1 truncate text-xs text-slate-500 sm:text-sm">{item.episodeTitle}</p>
             </div>
           </Link>
         );

@@ -31,7 +31,7 @@ export default async function WatchPage({ params }: WatchPageProps) {
   const nextEpisode = title.episodes.find((item) => item.number === currentEpisode.number + 1);
 
   return (
-    <main className="min-h-screen bg-[#050506]">
+    <main className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-[#050506]">
       <SiteHeader compact />
       <WatchAccessGate>
         <WatchExperience episode={currentEpisode} media={title} nextEpisode={nextEpisode} />

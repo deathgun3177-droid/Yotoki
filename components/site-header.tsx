@@ -40,9 +40,9 @@ export function SiteHeader({ initialQuery = "", compact = false }: SiteHeaderPro
     <motion.header
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="sticky top-0 z-40 border-b border-white/8 bg-[#050506]/86 backdrop-blur-xl"
+      className="sticky top-0 z-40 max-w-[100vw] overflow-x-hidden border-b border-white/8 bg-[#050506]/86 backdrop-blur-xl"
     >
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-2 overflow-hidden px-4 py-2.5 sm:gap-3 sm:px-6 sm:py-3 lg:flex-row lg:items-center lg:px-8">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             {showBackButton ? (
@@ -51,26 +51,26 @@ export function SiteHeader({ initialQuery = "", compact = false }: SiteHeaderPro
                 aria-label="Буцах"
                 title="Буцах"
                 onClick={handleBack}
-                className="yt-focus grid h-9 w-9 place-items-center rounded-md border border-white/10 bg-white/[0.04] text-slate-300 transition hover:border-teal-300/40 hover:text-white"
+                className="yt-focus grid h-8 w-8 place-items-center rounded-md border border-white/10 bg-white/[0.04] text-slate-300 transition hover:border-teal-300/40 hover:text-white sm:h-9 sm:w-9"
               >
-                <ArrowLeft size={18} />
+                <ArrowLeft size={17} />
               </button>
             ) : null}
             <Link className="yt-focus flex items-center gap-3 rounded-md" href="/">
-              <span className="relative h-10 w-10 overflow-hidden rounded-xl border border-white/10 bg-black shadow-[0_0_28px_rgba(168,85,247,0.32)]">
+              <span className="relative h-9 w-9 overflow-hidden rounded-xl border border-white/10 bg-black shadow-[0_0_28px_rgba(168,85,247,0.32)] sm:h-10 sm:w-10">
                 <Image src="/images/yotoki-logo.png" alt="YotoKi logo" fill priority className="object-cover" sizes="40px" />
               </span>
-              <span className="text-xl font-black tracking-tight text-white">YotoKi</span>
+              <span className="text-lg font-black tracking-tight text-white sm:text-xl">YotoKi</span>
             </Link>
           </div>
 
           <div className="flex items-center gap-2 lg:hidden">
             <Link
               href={authHref}
-              className="yt-focus inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/10 bg-white/[0.04] text-slate-300 transition hover:border-teal-300/40 hover:text-white"
+              className="yt-focus inline-flex h-8 w-8 items-center justify-center rounded-md border border-white/10 bg-white/[0.04] text-slate-300 transition hover:border-teal-300/40 hover:text-white sm:h-9 sm:w-9"
               aria-label={user ? "Profile" : "Sign in"}
             >
-              {user ? <UserRound size={17} /> : <LogIn size={17} />}
+              {user ? <UserRound size={16} /> : <LogIn size={16} />}
             </Link>
           </div>
         </div>
@@ -81,25 +81,29 @@ export function SiteHeader({ initialQuery = "", compact = false }: SiteHeaderPro
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Аниме, кино хайх"
-            className="yt-focus h-10 w-full rounded-lg border border-white/10 bg-white/[0.055] pl-10 pr-3 text-sm text-white placeholder:text-slate-500 transition focus:border-teal-300/45"
+            className="yt-focus h-11 w-full rounded-lg border border-white/10 bg-white/[0.055] pl-10 pr-3 text-sm text-white placeholder:text-slate-500 transition focus:border-teal-300/45 lg:h-10"
           />
         </form>
 
-        <nav className={`items-center gap-2 text-sm text-slate-300 ${compact ? "hidden lg:flex" : "flex"}`}>
-          <Link className="yt-focus rounded-md px-3 py-2 transition hover:bg-white/8 hover:text-white" href="/#recently">
+        <nav
+          className={`w-full items-center gap-1.5 overflow-x-auto whitespace-nowrap pb-1 text-sm text-slate-300 [scrollbar-width:none] lg:w-auto lg:gap-2 lg:overflow-visible lg:pb-0 ${
+            compact ? "hidden lg:flex" : "flex"
+          }`}
+        >
+          <Link className="yt-focus rounded-md px-2.5 py-2 transition hover:bg-white/8 hover:text-white lg:px-3" href="/#recently">
             Шинэ
           </Link>
-          <Link className="yt-focus rounded-md px-3 py-2 transition hover:bg-white/8 hover:text-white" href="/anime">
+          <Link className="yt-focus rounded-md px-2.5 py-2 transition hover:bg-white/8 hover:text-white lg:px-3" href="/anime">
             Аниме
           </Link>
-          <Link className="yt-focus rounded-md px-3 py-2 transition hover:bg-white/8 hover:text-white" href="/movies">
+          <Link className="yt-focus rounded-md px-2.5 py-2 transition hover:bg-white/8 hover:text-white lg:px-3" href="/movies">
             Кино
           </Link>
-          <Link className="yt-focus rounded-md px-3 py-2 transition hover:bg-white/8 hover:text-white" href="/info">
+          <Link className="yt-focus rounded-md px-2.5 py-2 transition hover:bg-white/8 hover:text-white lg:px-3" href="/info">
             Мэдээлэл
           </Link>
           <Link
-            className="yt-focus inline-flex items-center gap-2 rounded-md px-3 py-2 transition hover:bg-white/8 hover:text-white"
+            className="yt-focus inline-flex items-center gap-2 rounded-md px-2.5 py-2 transition hover:bg-white/8 hover:text-white lg:px-3"
             href={authHref}
           >
             {user ? <UserRound size={16} /> : <LogIn size={16} />}
