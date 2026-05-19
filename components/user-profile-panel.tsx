@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { Check, Copy, Edit3, LogOut, Settings, UploadCloud, UserRound, UsersRound } from "lucide-react";
+import { CalendarDays, Check, Copy, Edit3, LogOut, Settings, UploadCloud, UserRound, UsersRound } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
-import { formatAccessStatus } from "@/lib/auth/access";
+import { formatAccessStatus, watchAccessDays } from "@/lib/auth/access";
 import { formatPublicUserId } from "@/lib/auth/user-number";
 import type { YotokiUser } from "@/lib/types";
+
+const dayMs = 24 * 60 * 60 * 1000;
 
 export function UserProfilePanel() {
   const router = useRouter();
@@ -159,8 +161,119 @@ function ProfileForm({
 
         {message ? <p className="text-sm text-teal-200">{message}</p> : null}
       </form>
+
+      <WatchAccessSummary user={user} />
     </div>
   );
+}
+
+function WatchAccessSummary({ user }: { user: YotokiUser }) {
+  const access = getAccessDetails(user);
+
+  if (user.role === "admin") {
+    return (
+      <div className="mt-5 max-w-xl rounded-lg border border-teal-300/16 bg-teal-300/[0.06] p-4">
+        <div className="flex items-start gap-3">
+          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-teal-300/16 text-teal-100">
+            <CalendarDays size={20} />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-white">Үзэх эрх</p>
+            <p className="mt-1 text-sm leading-6 text-slate-300">Admin эрхтэй тул үзэх эрх байнга нээлттэй байна.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!access.active) {
+    return (
+      <div className="mt-5 max-w-xl rounded-lg border border-amber-300/18 bg-amber-300/[0.07] p-4">
+        <div className="flex items-start gap-3">
+          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-amber-300/14 text-amber-100">
+            <CalendarDays size={20} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-white">Үзэх эрх идэвхгүй байна</p>
+            <p className="mt-1 text-sm leading-6 text-slate-300">
+              {access.expiresAt ? `${formatProfileDate(access.expiresAt)}-нд дууссан байна.` : "Одоогоор идэвхтэй үзэх эрх алга."}
+            </p>
+            <Link className="mt-3 inline-flex rounded-md bg-teal-300 px-4 py-2 text-sm font-semibold text-black" href="/info">
+              Мэдээлэл харах
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-5 max-w-xl rounded-lg border border-teal-300/18 bg-teal-300/[0.06] p-4">
+      <div className="flex items-start gap-3">
+        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-teal-300/16 text-teal-100">
+          <CalendarDays size={20} />
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-white">Үзэх эрх</p>
+          <p className="mt-1 text-2xl font-semibold text-teal-100">{access.remainingDays} хоног үлдсэн</p>
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+        <AccessDate label="Нээгдсэн" value={formatProfileDate(access.startedAt)} />
+        <AccessDate label="Дуусах" value={formatProfileDate(access.expiresAt)} />
+      </div>
+    </div>
+  );
+}
+
+function AccessDate({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md bg-black/22 p-3">
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{label}</p>
+      <p className="mt-1 font-medium text-slate-100">{value}</p>
+    </div>
+  );
+}
+
+function getAccessDetails(user: YotokiUser) {
+  const expiresAt = parseProfileDate(user.watchAccessExpiresAt);
+
+  if (!expiresAt) {
+    return {
+      active: false,
+      expiresAt: null,
+      startedAt: null,
+      remainingDays: 0
+    };
+  }
+
+  const now = Date.now();
+  const expiresTime = expiresAt.getTime();
+
+  return {
+    active: expiresTime > now,
+    expiresAt,
+    startedAt: new Date(expiresTime - watchAccessDays * dayMs),
+    remainingDays: Math.max(0, Math.ceil((expiresTime - now) / dayMs))
+  };
+}
+
+function parseProfileDate(value?: string) {
+  if (!value) return null;
+
+  const time = Date.parse(value);
+  return Number.isFinite(time) ? new Date(time) : null;
+}
+
+function formatProfileDate(value: Date | null) {
+  if (!value) return "-";
+
+  return new Intl.DateTimeFormat("mn-MN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(value);
 }
 
 function InfoRow({ label, value, mono }: { label: string; value: string; mono?: boolean }) {

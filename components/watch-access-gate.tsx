@@ -27,9 +27,9 @@ export function WatchAccessGate({ children }: { children: React.ReactNode }) {
     return (
       <AccessMessage
         title="Үзэх эрх идэвхгүй байна"
-        description="Таны 30 хоногийн үзэх эрх идэвхгүй эсвэл дууссан байна."
-        href="/profile"
-        action="Профайл харах"
+        description="Үзэх эрх авах эсвэл сунгуулах мэдээллээ шалгаад, гүйлгээний утга дээр User ID-гаа бичнэ үү."
+        href="/info"
+        action="Мэдээлэл харах"
       />
     );
   }
