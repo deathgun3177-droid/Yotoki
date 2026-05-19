@@ -1,0 +1,25 @@
+.next/
+node_modules/
+out/
+dist/
+.vercel/
+
+.env
+.env*.local
+
+*.log
+*.tsbuildinfo
+next-env.d.ts
+
+# Local scratch/media files that should not go into the public repo.
+/*.html
+/*.pdf
+/*.mp4
+/*.mov
+/*.mkv
+/*.vrm
+/*.vroid
+/*.jpg
+/*.jpeg
+/*.png
+/Arunka10K_files/
