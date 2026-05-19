@@ -27,10 +27,14 @@ create table if not exists public.media_episodes (
   video_path text not null,
   subtitle_path text,
   thumbnail_path text,
+  is_free boolean not null default false,
   released_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (media_id, number)
 );
+
+alter table public.media_episodes
+add column if not exists is_free boolean not null default false;
 
 create index if not exists media_titles_added_at_idx on public.media_titles (added_at desc);
 create index if not exists media_titles_kind_idx on public.media_titles (kind);

@@ -10,6 +10,7 @@ export type Episode = {
   subtitleUrl?: string;
   thumbnail: string;
   releasedAt: string;
+  isFree?: boolean;
 };
 
 export type MediaTitle = {

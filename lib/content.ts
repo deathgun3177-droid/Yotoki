@@ -334,6 +334,7 @@ type DbEpisodeRow = {
   video_path: string | null;
   subtitle_path: string | null;
   thumbnail_path: string | null;
+  is_free?: boolean | null;
   released_at: string | null;
 };
 
@@ -341,20 +342,17 @@ async function getSupabaseTitles(): Promise<MediaTitle[]> {
   const supabase = createPublicSupabaseClient();
   if (!supabase) return mediaTitles;
 
-  const [{ data: titleRows, error: titleError }, { data: episodeRows, error: episodeError }] = await Promise.all([
+  const [{ data: titleRows, error: titleError }, episodeResult] = await Promise.all([
     supabase
       .from(mediaTitlesTable)
       .select(
         "id,slug,title,original_title,kind,year,rating,quality,poster_path,banner_path,synopsis,genres,status,featured,added_at"
       )
       .order("added_at", { ascending: false }),
-    supabase
-      .from(mediaEpisodesTable)
-      .select("id,media_id,number,title,runtime,quality,video_path,subtitle_path,thumbnail_path,released_at")
-      .order("number", { ascending: true })
+    getSupabaseEpisodeRows(supabase)
   ]);
 
-  if (titleError || episodeError || !Array.isArray(titleRows)) {
+  if (titleError || episodeResult.error || !Array.isArray(titleRows)) {
     return mediaTitles;
   }
 
@@ -363,7 +361,7 @@ async function getSupabaseTitles(): Promise<MediaTitle[]> {
   }
 
   const episodesByMediaId = new Map<string, DbEpisodeRow[]>();
-  for (const episode of (episodeRows ?? []) as DbEpisodeRow[]) {
+  for (const episode of (episodeResult.data ?? []) as DbEpisodeRow[]) {
     const existing = episodesByMediaId.get(episode.media_id) ?? [];
     existing.push(episode);
     episodesByMediaId.set(episode.media_id, existing);
@@ -398,10 +396,32 @@ async function getSupabaseTitles(): Promise<MediaTitle[]> {
         videoUrl: resolveStorageUrl(videoBucket, episode.video_path, demoVideo, supabase),
         subtitleUrl: resolveOptionalStorageUrl(subtitleBucket, episode.subtitle_path, supabase),
         thumbnail: resolveStorageUrl(imageBucket, episode.thumbnail_path, poster, supabase),
-        releasedAt: episode.released_at || title.added_at || new Date().toISOString()
+        releasedAt: episode.released_at || title.added_at || new Date().toISOString(),
+        isFree: Boolean(episode.is_free)
       }))
     };
   });
+}
+
+async function getSupabaseEpisodeRows(supabase: NonNullable<ReturnType<typeof createPublicSupabaseClient>>) {
+  const withFree = await supabase
+    .from(mediaEpisodesTable)
+    .select("id,media_id,number,title,runtime,quality,video_path,subtitle_path,thumbnail_path,is_free,released_at")
+    .order("number", { ascending: true });
+
+  if (!withFree.error || !isMissingIsFreeColumn(withFree.error)) {
+    return withFree;
+  }
+
+  return supabase
+    .from(mediaEpisodesTable)
+    .select("id,media_id,number,title,runtime,quality,video_path,subtitle_path,thumbnail_path,released_at")
+    .order("number", { ascending: true });
+}
+
+function isMissingIsFreeColumn(error: { message?: string; code?: string }) {
+  const message = `${error.code ?? ""} ${error.message ?? ""}`.toLowerCase();
+  return message.includes("is_free") || message.includes("column");
 }
 
 function resolveStorageUrl(bucket: string, path: string | null, fallback: string, supabase: NonNullable<ReturnType<typeof createPublicSupabaseClient>>) {

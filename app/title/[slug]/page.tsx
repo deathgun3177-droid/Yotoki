@@ -102,6 +102,7 @@ export default async function DetailPage({ params }: DetailPageProps) {
                 <div className="flex min-w-0 flex-col justify-center p-3 sm:p-4">
                   <h3 className="truncate font-semibold text-white">{episode.number}-р анги</h3>
                   <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em]">
+                    {episode.isFree ? <span className="rounded bg-amber-300/14 px-2 py-1 text-amber-100">ҮНЭГҮЙ</span> : null}
                     <span className="rounded bg-white/8 px-2 py-1 text-slate-300">{episode.quality}</span>
                     {episode.subtitleUrl ? <span className="rounded bg-teal-300/14 px-2 py-1 text-teal-100">MN</span> : null}
                   </div>

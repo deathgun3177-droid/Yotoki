@@ -655,6 +655,7 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
 
         <div className="mt-5 px-4 sm:px-0">
           <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.14em]">
+            {episode.isFree ? <span className="rounded bg-amber-300/14 px-2 py-1 text-amber-100">ҮНЭГҮЙ</span> : null}
             <span className="rounded bg-teal-300/14 px-2 py-1 text-teal-100">{episodeLabel}</span>
             <span className="rounded bg-white/8 px-2 py-1 text-slate-300">{episode.quality}</span>
             <span className="rounded bg-amber-300/14 px-2 py-1 text-amber-100">
@@ -689,7 +690,10 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
                   <Image src={item.thumbnail} alt="" fill className="object-cover" sizes="92px" />
                 </div>
                 <div className="min-w-0 p-2.5">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-teal-200">EP {item.number}</p>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-teal-200">
+                    EP {item.number}
+                    {item.isFree ? <span className="ml-2 rounded bg-amber-300/14 px-1.5 py-0.5 text-[10px] text-amber-100">FREE</span> : null}
+                  </p>
                   <p className="mt-1 truncate text-sm text-white">{item.title}</p>
                   <p className="mt-1 text-xs text-slate-500">{item.runtime}</p>
                 </div>
@@ -754,12 +758,17 @@ async function getSignedR2Url(path: string) {
     throw new Error("Video үзэхийн тулд дахин нэвтэрнэ үү.");
   }
 
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json"
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const response = await fetch("/api/r2/watch-url", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
+    headers,
     body: JSON.stringify({ path })
   });
 

@@ -30,6 +30,7 @@ type EditableEpisode = {
   subtitlePath?: string;
   thumbnailPath?: string;
   releasedAt: string;
+  isFree: boolean;
 };
 
 const titlesTable = process.env.NEXT_PUBLIC_SUPABASE_TITLES_TABLE || "media_titles";
@@ -50,6 +51,7 @@ export function AdminContentManager() {
   const [deletingEpisodeId, setDeletingEpisodeId] = useState("");
   const [updatingSubtitleId, setUpdatingSubtitleId] = useState("");
   const [updatingEpisodeNumberId, setUpdatingEpisodeNumberId] = useState("");
+  const [updatingFreeEpisodeId, setUpdatingFreeEpisodeId] = useState("");
   const [episodeNumberDrafts, setEpisodeNumberDrafts] = useState<Record<string, number>>({});
   const [subtitleFiles, setSubtitleFiles] = useState<Record<string, File | null>>({});
   const configured = isSupabaseConfigured();
@@ -72,11 +74,7 @@ export function AdminContentManager() {
       if (!supabase) return;
 
       setEpisodesLoading(true);
-      const { data, error } = await supabase
-        .from(episodesTable)
-        .select("id,number,quality,video_path,subtitle_path,thumbnail_path,released_at")
-        .eq("media_id", mediaId)
-        .order("number", { ascending: true });
+      const { data, error } = await selectEpisodesForAdmin(supabase, mediaId);
       setEpisodesLoading(false);
 
       if (error || !Array.isArray(data)) {
@@ -93,7 +91,8 @@ export function AdminContentManager() {
           videoPath: String(episode.video_path ?? ""),
           subtitlePath: typeof episode.subtitle_path === "string" ? episode.subtitle_path : undefined,
           thumbnailPath: typeof episode.thumbnail_path === "string" ? episode.thumbnail_path : undefined,
-          releasedAt: typeof episode.released_at === "string" ? episode.released_at : ""
+          releasedAt: typeof episode.released_at === "string" ? episode.released_at : "",
+          isFree: Boolean((episode as { is_free?: unknown }).is_free)
         }));
 
       setEpisodes(nextEpisodes);
@@ -480,6 +479,48 @@ export function AdminContentManager() {
     setMessage(`${episode.number}-р анги ${nextNumber}-р анги болж солигдлоо.`);
   }
 
+  async function handleToggleFreeEpisode(episode: EditableEpisode, isFree: boolean) {
+    setStatus("saving");
+    setUpdatingFreeEpisodeId(episode.id);
+    setMessage("");
+
+    if (!configured) {
+      setEpisodes((current) => current.map((item) => (item.id === episode.id ? { ...item, isFree } : item)));
+      setStatus("done");
+      setUpdatingFreeEpisodeId("");
+      setMessage(`${episode.number}-р анги ${isFree ? "үнэгүй preview" : "эрх шаарддаг"} боллоо.`);
+      return;
+    }
+
+    const supabase = createBrowserSupabaseClient();
+    if (!supabase) {
+      setStatus("error");
+      setUpdatingFreeEpisodeId("");
+      setMessage("Supabase client үүссэнгүй.");
+      return;
+    }
+
+    const { error } = await supabase
+      .from(episodesTable)
+      .update({
+        is_free: isFree,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", episode.id);
+
+    if (error) {
+      setStatus("error");
+      setUpdatingFreeEpisodeId("");
+      setMessage(error.message.includes("is_free") ? "Supabase дээр is_free column нэмэх хэрэгтэй. supabase/media_content.sql-г SQL Editor дээр ажиллуулна уу." : error.message);
+      return;
+    }
+
+    setEpisodes((current) => current.map((item) => (item.id === episode.id ? { ...item, isFree } : item)));
+    setStatus("done");
+    setUpdatingFreeEpisodeId("");
+    setMessage(`${episode.number}-р анги ${isFree ? "үнэгүй preview" : "эрх шаарддаг"} боллоо.`);
+  }
+
   function updateForm(next: Partial<EditableTitle>) {
     setForm((current) => (current ? { ...current, ...next } : current));
   }
@@ -592,6 +633,7 @@ export function AdminContentManager() {
                   const draftNumber = episodeNumberDrafts[episode.id] ?? episode.number;
                   const numberBusy = updatingEpisodeNumberId === episode.id;
                   const numberChanged = draftNumber !== episode.number;
+                  const freeBusy = updatingFreeEpisodeId === episode.id;
 
                   return (
                     <div key={episode.id} className="grid gap-3 rounded-md border border-white/10 bg-white/[0.035] px-3 py-3">
@@ -599,7 +641,7 @@ export function AdminContentManager() {
                         <div className="min-w-0">
                           <p className="font-semibold text-white">{episode.number}-р анги</p>
                           <p className="mt-1 truncate text-xs text-slate-500">
-                            {episode.quality} · {episode.subtitlePath ? "MN хадмалтай" : "Хадмалгүй"} · {episode.videoPath}
+                            {episode.quality} · {episode.subtitlePath ? "MN хадмалтай" : "Хадмалгүй"} · {episode.isFree ? "Үнэгүй preview" : "Эрх шаардна"} · {episode.videoPath}
                           </p>
                         </div>
                         <button
@@ -641,6 +683,27 @@ export function AdminContentManager() {
                         <p className="text-xs leading-5 text-slate-500">
                           Буруу дугаартай оруулсан бол video дахин upload хийхгүйгээр эндээс солино.
                         </p>
+                      </div>
+
+                      <div className="flex flex-col gap-2 rounded-md border border-white/8 bg-black/18 p-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <p className="text-xs font-semibold text-white">Үнэгүй preview</p>
+                          <p className="mt-1 text-xs leading-5 text-slate-500">
+                            Login хийсэн хүн үзэх эрхгүй байсан ч энэ ангийг үзнэ.
+                          </p>
+                        </div>
+                        <button
+                          disabled={status === "saving" || freeBusy}
+                          className={`yt-focus inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                            episode.isFree
+                              ? "border border-teal-300/35 bg-teal-300/18 text-teal-100 hover:bg-teal-300/24"
+                              : "border border-white/10 bg-white/[0.055] text-white hover:border-teal-300/35 hover:bg-white/[0.08]"
+                          }`}
+                          type="button"
+                          onClick={() => void handleToggleFreeEpisode(episode, !episode.isFree)}
+                        >
+                          {freeBusy ? "Сольж байна" : episode.isFree ? "Үнэгүй асаалттай" : "Үнэгүй болгох"}
+                        </button>
                       </div>
 
                       <div className="grid gap-2 rounded-md border border-white/8 bg-black/18 p-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
@@ -770,6 +833,29 @@ function QualityPicker({
       </div>
     </div>
   );
+}
+
+async function selectEpisodesForAdmin(supabase: SupabaseClient, mediaId: string) {
+  const withFree = await supabase
+    .from(episodesTable)
+    .select("id,number,quality,video_path,subtitle_path,thumbnail_path,is_free,released_at")
+    .eq("media_id", mediaId)
+    .order("number", { ascending: true });
+
+  if (!withFree.error || !isMissingIsFreeColumn(withFree.error)) {
+    return withFree;
+  }
+
+  return supabase
+    .from(episodesTable)
+    .select("id,number,quality,video_path,subtitle_path,thumbnail_path,released_at")
+    .eq("media_id", mediaId)
+    .order("number", { ascending: true });
+}
+
+function isMissingIsFreeColumn(error: { message?: string; code?: string }) {
+  const message = `${error.code ?? ""} ${error.message ?? ""}`.toLowerCase();
+  return message.includes("is_free") || message.includes("column");
 }
 
 function normalizeGenresInput(value: string, mediaKind: MediaKind) {

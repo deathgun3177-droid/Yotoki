@@ -5,7 +5,7 @@ import { Lock } from "lucide-react";
 import { hasActiveWatchAccess } from "@/lib/auth/access";
 import { useAuth } from "@/components/auth-provider";
 
-export function WatchAccessGate({ children }: { children: React.ReactNode }) {
+export function WatchAccessGate({ children, freePreview = false }: { children: React.ReactNode; freePreview?: boolean }) {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -21,6 +21,10 @@ export function WatchAccessGate({ children }: { children: React.ReactNode }) {
         action="Нэвтрэх"
       />
     );
+  }
+
+  if (freePreview) {
+    return children;
   }
 
   if (!hasActiveWatchAccess(user)) {

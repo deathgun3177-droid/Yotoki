@@ -33,7 +33,7 @@ export default async function WatchPage({ params }: WatchPageProps) {
   return (
     <main className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-[#050506]">
       <SiteHeader compact />
-      <WatchAccessGate>
+      <WatchAccessGate freePreview={Boolean(currentEpisode.isFree)}>
         <WatchExperience episode={currentEpisode} media={title} nextEpisode={nextEpisode} />
       </WatchAccessGate>
     </main>
