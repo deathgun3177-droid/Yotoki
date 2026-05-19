@@ -129,6 +129,15 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
     [duration, showControls]
   );
 
+  const changeVolumeBy = useCallback(
+    (amount: number) => {
+      setVolume((current) => Math.min(1, Math.max(0, Number((current + amount).toFixed(2)))));
+      setIsMuted(false);
+      showControls();
+    },
+    [showControls]
+  );
+
   const clearFullscreenRestoreTimers = useCallback(() => {
     fullscreenRestoreTimersRef.current.forEach((timer) => clearTimeout(timer));
     fullscreenRestoreTimersRef.current = [];
@@ -370,6 +379,18 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
         return;
       }
 
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        changeVolumeBy(0.05);
+        return;
+      }
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        changeVolumeBy(-0.05);
+        return;
+      }
+
       if (event.key.toLowerCase() !== "f") return;
 
       event.preventDefault();
@@ -383,7 +404,7 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [rememberFullscreenPlayback, restoreFullscreenPlayback, seekBy, softFullscreen, toggleFullscreen, togglePlay]);
+  }, [changeVolumeBy, rememberFullscreenPlayback, restoreFullscreenPlayback, seekBy, softFullscreen, toggleFullscreen, togglePlay]);
 
   useEffect(() => {
     if (!softFullscreen) return;
