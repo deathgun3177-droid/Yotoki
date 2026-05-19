@@ -606,7 +606,7 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
 
             return (
               <Link
-                className={`grid grid-cols-[86px_1fr] overflow-hidden rounded-lg border transition ${
+                className={`grid min-h-[78px] grid-cols-[92px_1fr] overflow-hidden rounded-lg border transition ${
                   active
                     ? "border-teal-300/50 bg-teal-300/10"
                     : "border-white/8 bg-black/18 hover:border-white/18 hover:bg-white/[0.055]"
@@ -614,8 +614,8 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
                 href={`/watch/${media.slug}/${item.number}`}
                 key={item.id}
               >
-                <div className="relative aspect-video">
-                  <Image src={item.thumbnail} alt="" fill className="object-cover" sizes="86px" />
+                <div className="relative min-h-full self-stretch">
+                  <Image src={item.thumbnail} alt="" fill className="object-cover" sizes="92px" />
                 </div>
                 <div className="min-w-0 p-2.5">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-teal-200">EP {item.number}</p>
