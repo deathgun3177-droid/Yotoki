@@ -700,7 +700,7 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
               <div className="absolute inset-0 z-10 grid place-items-center bg-black/38 text-sm font-semibold text-slate-200">
                 <div className="soft-border rounded-lg bg-black/58 px-5 py-4 text-center shadow-2xl shadow-black/50 backdrop-blur">
                   <span className="yotoki-spinner mx-auto block" />
-                  <span className="mt-3 block">{streamStatus === "loading" ? "Video ачаалж байна" : "Түр буферлэж байна"}</span>
+                  <span className="mt-3 block">Видео ачаалж байна</span>
                 </div>
               </div>
             ) : null}
