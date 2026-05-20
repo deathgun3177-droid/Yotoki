@@ -168,18 +168,18 @@ main {
     display: -webkit-box !important;
     max-width: 92% !important;
     overflow: hidden !important;
-    padding: 0.22rem 0.45rem !important;
-    font-size: clamp(0.76rem, 3.35vw, 0.96rem) !important;
-    line-height: 1.24 !important;
+    padding: 0.18rem 0.4rem !important;
+    font-size: clamp(0.7rem, 3.05vw, 0.88rem) !important;
+    line-height: 1.2 !important;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
   }
 
   .yotoki-player--fullscreen .yotoki-subtitle-text {
     max-width: 90% !important;
-    padding: 0.28rem 0.55rem !important;
-    font-size: clamp(0.82rem, 3.65vw, 1.06rem) !important;
-    line-height: 1.22 !important;
+    padding: 0.22rem 0.48rem !important;
+    font-size: clamp(0.76rem, 3.3vw, 0.96rem) !important;
+    line-height: 1.2 !important;
   }
 }
 
