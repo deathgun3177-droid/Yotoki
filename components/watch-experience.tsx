@@ -39,6 +39,7 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
   const videoRef = useRef<HTMLVideoElement>(null);
   const saveRef = useRef(0);
   const controlsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const centerActionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastTapRef = useRef<{ side: "left" | "right"; time: number } | null>(null);
   const fullscreenPlaybackRef = useRef<boolean | null>(null);
@@ -48,6 +49,7 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
   const [volume, setVolume] = useState(0.85);
   const [subtitlesEnabled, setSubtitlesEnabled] = useState(true);
   const [controlsVisible, setControlsVisible] = useState(true);
+  const [centerActionVisible, setCenterActionVisible] = useState(true);
   const [softFullscreen, setSoftFullscreen] = useState(false);
   const [nativeFullscreen, setNativeFullscreen] = useState(false);
   const [subtitleState, setSubtitleState] = useState<{
@@ -102,6 +104,25 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
     }
   }, [isPlaying]);
 
+  const clearCenterActionTimer = useCallback(() => {
+    if (centerActionTimerRef.current) {
+      clearTimeout(centerActionTimerRef.current);
+      centerActionTimerRef.current = null;
+    }
+  }, []);
+
+  const revealCenterAction = useCallback(() => {
+    clearCenterActionTimer();
+    setCenterActionVisible(true);
+
+    if (isPlaying) {
+      centerActionTimerRef.current = setTimeout(() => {
+        setCenterActionVisible(false);
+        centerActionTimerRef.current = null;
+      }, 1800);
+    }
+  }, [clearCenterActionTimer, isPlaying]);
+
   const togglePlay = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -110,10 +131,13 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
 
     if (video.paused) {
       void video.play();
+      clearCenterActionTimer();
+      setCenterActionVisible(false);
     } else {
       video.pause();
+      setCenterActionVisible(true);
     }
-  }, [showControls]);
+  }, [clearCenterActionTimer, showControls]);
 
   const seekBy = useCallback(
     (seconds: number) => {
@@ -447,17 +471,20 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
         clearTimeout(tapTimerRef.current);
       }
 
+      clearCenterActionTimer();
       clearFullscreenRestoreTimers();
       unlockOrientation();
     };
-  }, [clearFullscreenRestoreTimers]);
+  }, [clearCenterActionTimer, clearFullscreenRestoreTimers]);
 
   function handleFramePointerUp(event: PointerEvent<HTMLDivElement>) {
     const target = event.target;
     if (target instanceof Element && target.closest("[data-player-controls='true']")) return;
 
+    showControls();
+    revealCenterAction();
+
     if (event.pointerType !== "touch" && event.pointerType !== "pen") {
-      togglePlay();
       return;
     }
 
@@ -484,10 +511,9 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
     }
 
     tapTimerRef.current = setTimeout(() => {
-      togglePlay();
       tapTimerRef.current = null;
       lastTapRef.current = null;
-    }, 260);
+    }, 320);
   }
 
   function handleLoadedMetadata() {
@@ -566,18 +592,41 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
               preload="metadata"
               onLoadedMetadata={handleLoadedMetadata}
               onTimeUpdate={handleTimeUpdate}
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
+              onPlay={() => {
+                setIsPlaying(true);
+                clearCenterActionTimer();
+                setCenterActionVisible(false);
+              }}
+              onPause={() => {
+                setIsPlaying(false);
+                setCenterActionVisible(true);
+              }}
               onEnded={handleEnded}
             >
               {streamVideoUrl ? <source key={streamVideoUrl} src={streamVideoUrl} type="video/mp4" /> : null}
             </video>
 
+            {streamStatus === "ready" && streamVideoUrl && (centerActionVisible || !isPlaying) ? (
+              <button
+                data-player-controls="true"
+                type="button"
+                aria-label={isPlaying ? "Pause" : "Play"}
+                className="yt-focus absolute left-1/2 top-1/2 z-20 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/18 bg-black/58 text-white shadow-[0_8px_30px_rgba(0,0,0,0.45)] backdrop-blur transition hover:bg-black/70 sm:h-[72px] sm:w-[72px]"
+                onPointerUp={(event) => event.stopPropagation()}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  togglePlay();
+                }}
+              >
+                {isPlaying ? <Pause size={30} fill="currentColor" /> : <Play className="ml-1" size={32} fill="currentColor" />}
+              </button>
+            ) : null}
+
             {activeSubtitle ? (
               <div className="yotoki-subtitle-wrap pointer-events-none absolute inset-x-4 bottom-[12%] z-10 text-center">
                 <span
                   className={`yotoki-subtitle-text inline-block max-w-[92%] whitespace-pre-line rounded-md bg-black/62 font-semibold leading-snug text-white shadow-[0_3px_18px_rgba(0,0,0,0.75)] ${
-                    fullscreenLayout ? "px-4 py-2 text-2xl sm:text-3xl lg:text-4xl" : "px-3 py-1.5 text-base sm:text-xl"
+                    fullscreenLayout ? "px-3 py-1.5 text-2xl sm:text-3xl lg:text-4xl" : "px-2.5 py-1 text-base sm:text-xl"
                   }`}
                 >
                   {activeSubtitle}
