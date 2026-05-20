@@ -60,6 +60,7 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
   }>({ episodeId: episode.id, cues: [], status: "loading" });
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [episodeRuntimeOverrides, setEpisodeRuntimeOverrides] = useState<Record<string, string>>({});
   const [streamState, setStreamState] = useState<{
     episodeId: string;
     videoUrl: string | null;
@@ -90,6 +91,17 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
   const seekPercent = duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0;
   const volumePercent = Math.min(100, Math.max(0, (isMuted ? 0 : volume) * 100));
   const currentRuntime = duration > 0 ? formatRuntime(duration) : episode.runtime;
+  const getEpisodeRuntimeLabel = useCallback(
+    (item: Episode) => {
+      if (item.id === episode.id) return currentRuntime;
+
+      const resolvedRuntime = episodeRuntimeOverrides[item.id];
+      if (resolvedRuntime) return resolvedRuntime;
+
+      return isLegacyRuntimeLabel(item.runtime) ? "Уншиж байна..." : item.runtime;
+    },
+    [currentRuntime, episode.id, episodeRuntimeOverrides]
+  );
 
   const showControls = useCallback(() => {
     setControlsVisible(true);
@@ -313,6 +325,47 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
       cancelled = true;
     };
   }, [episode.id, episode.subtitleUrl, episode.videoUrl, user?.id]);
+
+  useEffect(() => {
+    const episodesToResolve = media.episodes.filter((item) => item.id !== episode.id && item.videoUrl);
+    if (!episodesToResolve.length) return;
+
+    const needsAuth = episodesToResolve.some((item) => isR2StoragePath(item.videoUrl));
+    if (needsAuth && !user?.id) return;
+
+    let cancelled = false;
+    const readers: Array<{ cancel: () => void }> = [];
+
+    async function resolveEpisodeDurations() {
+      for (const item of episodesToResolve) {
+        if (cancelled) return;
+
+        try {
+          const videoUrl = isR2StoragePath(item.videoUrl) ? await getSignedR2Url(item.videoUrl) : item.videoUrl;
+          if (cancelled || !videoUrl) return;
+
+          const reader = createVideoDurationReader(videoUrl);
+          readers.push(reader);
+
+          const seconds = await reader.promise;
+          if (cancelled) return;
+
+          const runtime = formatRuntime(seconds);
+          setEpisodeRuntimeOverrides((current) => (current[item.id] === runtime ? current : { ...current, [item.id]: runtime }));
+        } catch {
+          if (cancelled) return;
+          setEpisodeRuntimeOverrides((current) => (current[item.id] ? current : { ...current, [item.id]: "Тодорхойгүй" }));
+        }
+      }
+    }
+
+    void resolveEpisodeDurations();
+
+    return () => {
+      cancelled = true;
+      readers.forEach((reader) => reader.cancel());
+    };
+  }, [episode.id, media.episodes, user?.id]);
 
   useEffect(() => {
     if (!streamVideoUrl || streamStatus !== "ready") return;
@@ -769,7 +822,7 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
                 <div className="min-w-0 p-2.5">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-teal-200">EP {item.number}</p>
                   <p className="mt-1 truncate text-sm text-white">{item.title}</p>
-                  <p className="mt-1 text-xs text-slate-500">{item.id === episode.id ? currentRuntime : item.runtime}</p>
+                  <p className="mt-1 text-xs text-slate-500">{getEpisodeRuntimeLabel(item)}</p>
                 </div>
               </Link>
             );
@@ -813,6 +866,59 @@ function IconButton({
       {children}
     </button>
   );
+}
+
+function createVideoDurationReader(url: string) {
+  const video = document.createElement("video");
+  let settled = false;
+  let rejectDuration: (error: Error) => void = () => undefined;
+
+  const cleanup = () => {
+    video.onloadedmetadata = null;
+    video.onerror = null;
+    video.removeAttribute("src");
+    video.load();
+  };
+
+  const promise = new Promise<number>((resolve, reject) => {
+    rejectDuration = reject;
+    video.preload = "metadata";
+    video.onloadedmetadata = () => {
+      if (settled) return;
+      settled = true;
+
+      const duration = video.duration;
+      cleanup();
+
+      if (Number.isFinite(duration) && duration > 0) {
+        resolve(duration);
+        return;
+      }
+
+      reject(new Error("Video duration олдсонгүй."));
+    };
+    video.onerror = () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(new Error("Video duration уншиж чадсангүй."));
+    };
+    video.src = url;
+  });
+
+  return {
+    promise,
+    cancel: () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      rejectDuration(new Error("Video duration cancelled."));
+    }
+  };
+}
+
+function isLegacyRuntimeLabel(value: string) {
+  return value === "24 мин" || value === "Тодорхойгүй";
 }
 
 async function getSignedR2Url(path: string) {
