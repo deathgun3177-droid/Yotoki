@@ -648,10 +648,10 @@ export function AdminContentManager() {
 
                   return (
                     <div key={episode.id} className="grid min-w-0 gap-3 rounded-md border border-white/10 bg-white/[0.04] px-3 py-3">
-                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
                         <div className="min-w-0">
                           <p className="font-semibold text-white">{episode.number}-р анги</p>
-                          <p className="mt-1 truncate text-xs text-slate-500">
+                          <p className="mt-1 max-w-full truncate text-xs text-slate-500">
                             {episode.quality} · {episode.subtitlePath ? "MN хадмалтай" : "Хадмалгүй"} · {episode.isFree ? "Үнэгүй preview" : "Эрх шаардна"} · {episode.videoPath}
                           </p>
                         </div>
@@ -666,7 +666,7 @@ export function AdminContentManager() {
                         </button>
                       </div>
 
-                      <div className="grid min-w-0 gap-2 rounded-md border border-white/8 bg-black/18 p-2 sm:grid-cols-[132px_auto_minmax(0,1fr)] sm:items-end">
+                      <div className="grid min-w-0 gap-2 rounded-md border border-white/8 bg-black/18 p-2 md:grid-cols-[132px_auto_minmax(0,1fr)] md:items-end">
                         <label className="block">
                           <span className="mb-1.5 block text-xs font-medium text-slate-400">Анги дугаар</span>
                           <input
@@ -696,7 +696,7 @@ export function AdminContentManager() {
                         </p>
                       </div>
 
-                      <div className="flex min-w-0 flex-col gap-2 rounded-md border border-white/8 bg-black/18 p-2 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="grid min-w-0 gap-2 rounded-md border border-white/8 bg-black/18 p-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
                         <div className="min-w-0">
                           <p className="text-xs font-semibold text-white">Үнэгүй preview</p>
                           <p className="mt-1 text-xs leading-5 text-slate-500">
@@ -723,14 +723,14 @@ export function AdminContentManager() {
                         </button>
                       </div>
 
-                      <div className="grid min-w-0 gap-2 rounded-md border border-white/8 bg-black/18 p-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+                      <div className="grid min-w-0 gap-2 rounded-md border border-white/8 bg-black/18 p-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
                         <label className="yt-focus grid min-w-0 cursor-pointer grid-cols-[34px_minmax(0,1fr)] items-center gap-2 rounded-md border border-white/10 bg-white/[0.035] px-2.5 py-2 transition hover:border-teal-300/35 hover:bg-white/[0.06]">
                           <span className="grid h-8 w-8 place-items-center rounded bg-teal-300/12 text-teal-100">
                             <FileText size={16} />
                           </span>
                           <span className="min-w-0">
                             <span className="block text-xs font-semibold text-white">Subtitle солих</span>
-                            <span className="block truncate text-xs text-slate-500">
+                            <span className="block max-w-full truncate text-xs text-slate-500" title={selectedSubtitleFile?.name || episode.subtitlePath || ".srt / .ass / .vtt"}>
                               {selectedSubtitleFile?.name || episode.subtitlePath || ".srt / .ass / .vtt"}
                             </span>
                           </span>
