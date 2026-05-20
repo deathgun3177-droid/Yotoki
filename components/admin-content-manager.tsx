@@ -500,25 +500,36 @@ export function AdminContentManager() {
       return;
     }
 
-    const { error } = await supabase
-      .from(episodesTable)
-      .update({
-        is_free: isFree,
-        updated_at: new Date().toISOString()
-      })
-      .eq("id", episode.id);
-
-    if (error) {
+    const token = await getAccessToken(supabase).catch((error) => {
       setStatus("error");
       setUpdatingFreeEpisodeId("");
-      setMessage(error.message.includes("is_free") ? "Supabase дээр is_free column нэмэх хэрэгтэй. supabase/media_content.sql-г SQL Editor дээр ажиллуулна уу." : error.message);
+      setMessage(error instanceof Error ? error.message : "Admin session олдсонгүй. Дахин нэвтэрнэ үү.");
+      return "";
+    });
+
+    if (!token) return;
+
+    const response = await fetch("/api/admin/episodes/free", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ episodeId: episode.id, isFree })
+    });
+    const payload = (await response.json().catch(() => null)) as { isFree?: boolean; error?: string } | null;
+
+    if (!response.ok || typeof payload?.isFree !== "boolean") {
+      setStatus("error");
+      setUpdatingFreeEpisodeId("");
+      setMessage(payload?.error || "Үнэгүй preview ON/OFF хадгалж чадсангүй.");
       return;
     }
 
-    setEpisodes((current) => current.map((item) => (item.id === episode.id ? { ...item, isFree } : item)));
+    setEpisodes((current) => current.map((item) => (item.id === episode.id ? { ...item, isFree: payload.isFree! } : item)));
     setStatus("done");
     setUpdatingFreeEpisodeId("");
-    setMessage(`${episode.number}-р анги ${isFree ? "үнэгүй preview" : "эрх шаарддаг"} боллоо.`);
+    setMessage(`${episode.number}-р анги ${payload.isFree ? "үнэгүй preview" : "эрх шаарддаг"} боллоо.`);
   }
 
   function updateForm(next: Partial<EditableTitle>) {

@@ -1,8 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 import { profileTableName } from "@/lib/auth/user-number";
+import { getUserRole } from "@/lib/auth/roles";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export type ServerAuthUser = {
   id: string;
@@ -37,7 +39,7 @@ export async function getServerAuthUser(request: Request): Promise<{ token: stri
     user: {
       id: data.user.id,
       email: data.user.email,
-      role: data.user.app_metadata?.role === "admin" ? "admin" : "user"
+      role: getUserRole(data.user.email, data.user.app_metadata?.role)
     }
   };
 }
@@ -84,7 +86,7 @@ export async function requireWatchAccess(request: Request) {
   return result;
 }
 
-function createServerSupabaseClient(token?: string) {
+export function createServerSupabaseClient(token?: string) {
   if (!supabaseUrl || !supabaseAnonKey) {
     return null;
   }
@@ -97,6 +99,19 @@ function createServerSupabaseClient(token?: string) {
           }
         }
       : undefined,
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false
+    }
+  });
+}
+
+export function createServiceRoleSupabaseClient() {
+  if (!supabaseUrl || !supabaseServiceRoleKey) {
+    return null;
+  }
+
+  return createClient(supabaseUrl, supabaseServiceRoleKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false

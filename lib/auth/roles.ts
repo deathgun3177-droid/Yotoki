@@ -16,7 +16,7 @@ export function getUserRole(email?: string | null, metadataRole?: unknown): "use
 }
 
 export function getSupabaseUserRole(user: User) {
-  return user.app_metadata?.role === "admin" ? "admin" : "user";
+  return getUserRole(user.email, user.app_metadata?.role);
 }
 
 function getAdminEmails() {
