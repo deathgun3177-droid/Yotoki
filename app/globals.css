@@ -175,6 +175,24 @@ main {
     -webkit-line-clamp: 2;
   }
 
+  .yotoki-player:not(.yotoki-player--fullscreen) .yotoki-subtitle-wrap {
+    left: 50% !important;
+    right: auto !important;
+    width: fit-content !important;
+    max-width: 90% !important;
+    transform: translateX(-50%) !important;
+    text-align: center !important;
+  }
+
+  .yotoki-player:not(.yotoki-player--fullscreen) .yotoki-subtitle-text {
+    display: inline-block !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+    max-height: 2.4em !important;
+    white-space: pre-line !important;
+    overflow-wrap: anywhere;
+  }
+
   .yotoki-player--fullscreen .yotoki-subtitle-text {
     max-width: 90% !important;
     padding: 0.22rem 0.48rem !important;
