@@ -178,6 +178,7 @@ main {
   .yotoki-player:not(.yotoki-player--fullscreen) .yotoki-subtitle-wrap {
     left: 50% !important;
     right: auto !important;
+    bottom: clamp(2.25rem, 10%, 3rem) !important;
     width: fit-content !important;
     max-width: 90% !important;
     transform: translateX(-50%) !important;
