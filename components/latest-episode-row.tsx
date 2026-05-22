@@ -18,8 +18,15 @@ export function LatestEpisodeRow({ episode }: { episode: LatestEpisode }) {
             ҮНЭГҮЙ
           </span>
         ) : null}
-        <div className="relative h-full min-h-[96px] bg-black/30">
-          <Image src={episode.thumbnail || episode.poster} alt="" fill className="object-contain p-1.5" sizes="150px" />
+        <div className="relative aspect-video bg-black/30">
+          <Image
+            src={episode.thumbnail || episode.poster}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="150px"
+            style={{ objectPosition: "center 62%" }}
+          />
           <div className="absolute inset-0 grid place-items-center bg-black/20 opacity-0 transition group-hover:opacity-100">
             <span className="grid h-9 w-9 place-items-center rounded-full bg-white text-black">
               <Play size={17} fill="currentColor" />
