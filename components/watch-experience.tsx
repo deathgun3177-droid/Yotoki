@@ -632,11 +632,11 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
       <section className="soft-border mx-4 min-w-0 overflow-hidden rounded-lg bg-white/[0.035] p-2 shadow-2xl shadow-black/24 sm:mx-0 sm:p-3">
         <div
           ref={playerRef}
-          className={`yotoki-player overflow-hidden bg-black shadow-2xl shadow-black/50 ${
+          className={`video-player yotoki-player overflow-hidden bg-black shadow-2xl shadow-black/50 ${
             fullscreenLayout
               ? "yotoki-player--fullscreen fixed inset-0 z-50 rounded-none"
               : "relative rounded-md"
-          } ${controlsVisible ? "" : "cursor-none"}`}
+          } ${controlsVisible ? "yotoki-player--controls-visible" : "yotoki-player--controls-hidden cursor-none"}`}
           onMouseMove={showControls}
           onTouchStart={showControls}
           onFocus={showControls}
@@ -673,7 +673,7 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
                 data-player-controls="true"
                 type="button"
                 aria-label={isPlaying ? "Pause" : "Play"}
-                className="yt-focus absolute left-1/2 top-1/2 z-20 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/18 bg-black/58 text-white shadow-[0_8px_30px_rgba(0,0,0,0.45)] backdrop-blur transition hover:bg-black/70 sm:h-[72px] sm:w-[72px]"
+                className="video-center-button yt-focus absolute left-1/2 top-1/2 z-20 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/18 bg-black/58 text-white shadow-[0_8px_30px_rgba(0,0,0,0.45)] backdrop-blur transition hover:bg-black/70 sm:h-[72px] sm:w-[72px]"
                 onPointerUp={(event) => event.stopPropagation()}
                 onClick={(event) => {
                   event.stopPropagation();
@@ -685,7 +685,7 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
             ) : null}
 
             {activeSubtitle ? (
-              <div className="yotoki-subtitle-wrap pointer-events-none absolute inset-x-4 bottom-[12%] z-10 text-center">
+              <div className="subtitle-overlay yotoki-subtitle-wrap pointer-events-none absolute inset-x-4 bottom-[12%] z-10 text-center">
                 <span
                   className={`yotoki-subtitle-text inline-block max-w-[92%] whitespace-pre-line rounded-md bg-black/62 font-semibold leading-snug text-white shadow-[0_3px_18px_rgba(0,0,0,0.75)] ${
                     fullscreenLayout ? "px-3 py-1.5 text-2xl sm:text-3xl lg:text-4xl" : "px-2.5 py-1 text-base sm:text-xl"
@@ -713,7 +713,7 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
 
             <div
               data-player-controls="true"
-              className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/92 via-black/48 to-transparent px-3 pb-3 pt-16 transition duration-300 ${
+              className={`yotoki-player-controls absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/92 via-black/48 to-transparent px-3 pb-3 pt-16 transition duration-300 ${
                 controlsVisible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
               }`}
             >
@@ -730,7 +730,7 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
                 }}
               />
 
-              <div className="flex flex-wrap items-center gap-2 text-white">
+              <div className="yotoki-player-control-row flex flex-wrap items-center gap-2 text-white">
                 <IconButton label="5 секунд ухрах" onClick={() => seekBy(-5)}>
                   <RotateCcw size={18} />
                 </IconButton>
@@ -744,19 +744,23 @@ export function WatchExperience({ media, episode, nextEpisode }: WatchExperience
                 </IconButton>
 
                 {nextEpisode ? (
-                  <IconButton label="Next episode" onClick={() => router.push(`/watch/${media.slug}/${nextEpisode.number}`)}>
-                    <SkipForward size={18} />
-                  </IconButton>
+                  <span className="hidden sm:contents">
+                    <IconButton label="Next episode" onClick={() => router.push(`/watch/${media.slug}/${nextEpisode.number}`)}>
+                      <SkipForward size={18} />
+                    </IconButton>
+                  </span>
                 ) : null}
 
-                <span className="min-w-[92px] text-xs tabular-nums text-slate-300">
+                <span className="yotoki-time-label min-w-[92px] text-xs tabular-nums text-slate-300">
                   {formatPlaybackTime(currentTime)} / {formatPlaybackTime(duration)}
                 </span>
 
-                <div className="ml-auto flex items-center gap-2">
-                  <IconButton label={isMuted ? "Unmute" : "Mute"} onClick={() => setIsMuted((current) => !current)}>
-                    {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-                  </IconButton>
+                <div className="yotoki-control-cluster ml-auto flex items-center gap-2">
+                  <span className="hidden sm:contents">
+                    <IconButton label={isMuted ? "Unmute" : "Mute"} onClick={() => setIsMuted((current) => !current)}>
+                      {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                    </IconButton>
+                  </span>
                   <input
                     aria-label="Volume"
                     type="range"
@@ -869,7 +873,7 @@ function IconButton({
         event.stopPropagation();
         onClick();
       }}
-      className={`yt-focus grid h-9 w-9 place-items-center rounded-md border transition disabled:cursor-not-allowed disabled:opacity-40 sm:h-10 sm:w-10 ${
+      className={`video-control-button yt-focus grid h-9 w-9 place-items-center rounded-md border transition disabled:cursor-not-allowed disabled:opacity-40 sm:h-10 sm:w-10 ${
         active
           ? "border-teal-300/50 bg-teal-300/18 text-teal-100"
           : "border-white/10 bg-white/8 text-slate-100 hover:border-white/24 hover:bg-white/14"

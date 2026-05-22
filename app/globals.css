@@ -154,51 +154,99 @@ main {
   }
 }
 
-@media (max-width: 768px) {
-  .yotoki-subtitle-wrap {
-    inset-inline: 0.75rem !important;
-    bottom: clamp(3.75rem, 17%, 6rem) !important;
-  }
-
-  .yotoki-player--fullscreen .yotoki-subtitle-wrap {
-    bottom: clamp(4.5rem, 18%, 7.5rem) !important;
-  }
-
-  .yotoki-subtitle-text {
-    display: -webkit-box !important;
-    max-width: 92% !important;
-    overflow: hidden !important;
-    padding: 2.5px 6px !important;
-    font-size: clamp(0.7rem, 3.05vw, 0.88rem) !important;
-    line-height: 1.2 !important;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-
-  .yotoki-player:not(.yotoki-player--fullscreen) .yotoki-subtitle-wrap {
+@media (max-width: 640px) {
+  .video-player .subtitle-overlay {
     left: 50% !important;
     right: auto !important;
-    bottom: calc(clamp(2.25rem, 10%, 3rem) - 20px) !important;
+    bottom: 8% !important;
     width: fit-content !important;
     max-width: 90% !important;
     transform: translateX(-50%) !important;
     text-align: center !important;
   }
 
-  .yotoki-player:not(.yotoki-player--fullscreen) .yotoki-subtitle-text {
-    display: inline-block !important;
-    width: fit-content !important;
-    max-width: 100% !important;
-    max-height: 2.4em !important;
-    white-space: pre-line !important;
-    overflow-wrap: anywhere;
+  .video-player.yotoki-player--controls-visible .subtitle-overlay {
+    bottom: max(16%, 72px) !important;
   }
 
-  .yotoki-player--fullscreen .yotoki-subtitle-text {
+  .video-player.yotoki-player--controls-hidden .subtitle-overlay {
+    bottom: 8% !important;
+  }
+
+  .video-player .yotoki-subtitle-text {
+    display: -webkit-box !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    padding: 6px 10px !important;
+    border-radius: 6px !important;
+    background: rgba(0, 0, 0, 0.55) !important;
+    font-size: clamp(16px, 4.35vw, 18px) !important;
+    line-height: 1.35 !important;
+    text-align: center !important;
+    white-space: pre-line !important;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .video-player.yotoki-player--fullscreen .subtitle-overlay {
+    bottom: 8% !important;
+  }
+
+  .video-player.yotoki-player--fullscreen.yotoki-player--controls-visible .subtitle-overlay {
+    bottom: max(16%, 74px) !important;
+  }
+
+  .video-player.yotoki-player--fullscreen .yotoki-subtitle-text {
     max-width: 90% !important;
-    padding: 0.22rem 0.48rem !important;
-    font-size: clamp(0.76rem, 3.3vw, 0.96rem) !important;
-    line-height: 1.2 !important;
+    font-size: clamp(16px, 3.2vw, 18px) !important;
+  }
+
+  .yotoki-player-controls {
+    padding: 2.25rem 0.55rem calc(0.5rem + env(safe-area-inset-bottom)) !important;
+  }
+
+  .yotoki-player-control-row {
+    gap: 0.35rem !important;
+  }
+
+  .yotoki-control-cluster {
+    gap: 0.35rem !important;
+  }
+
+  .yotoki-time-label {
+    min-width: 72px !important;
+    font-size: 0.68rem !important;
+  }
+
+  .video-control-button {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .video-control-button svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .video-center-button {
+    width: 52px !important;
+    height: 52px !important;
+  }
+
+  .video-center-button svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .yotoki-player-controls .yotoki-range {
+    height: 0.35rem;
+  }
+
+  .yotoki-player--fullscreen,
+  .yotoki-player--fullscreen .yotoki-player-frame {
+    height: 100dvh;
   }
 }
 
