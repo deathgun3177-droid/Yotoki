@@ -25,7 +25,7 @@ export function LatestEpisodeRow({ episode }: { episode: LatestEpisode }) {
             fill
             className="object-cover"
             sizes="150px"
-            style={{ objectPosition: "center 62%" }}
+            style={{ objectPosition: "center bottom" }}
           />
           <div className="absolute inset-0 grid place-items-center bg-black/20 opacity-0 transition group-hover:opacity-100">
             <span className="grid h-9 w-9 place-items-center rounded-full bg-white text-black">
