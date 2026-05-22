@@ -58,9 +58,9 @@ export function SiteHeader({ initialQuery = "", compact = false }: SiteHeaderPro
             ) : null}
             <Link className="yt-focus flex items-center gap-3 rounded-md" href="/">
               <span className="relative h-9 w-9 overflow-hidden rounded-xl border border-white/10 bg-black shadow-[0_0_28px_rgba(168,85,247,0.32)] sm:h-10 sm:w-10">
-                <Image src="/images/yotoki-logo.png" alt="YotoKi logo" fill priority className="object-cover" sizes="40px" />
+                <Image src="/images/lumi-icon-192.png" alt="Lumi+ logo" fill priority className="object-cover" sizes="40px" />
               </span>
-              <span className="text-lg font-black tracking-tight text-white sm:text-xl">YotoKi</span>
+              <span className="text-lg font-black tracking-tight text-white sm:text-xl">Lumi+</span>
             </Link>
           </div>
 

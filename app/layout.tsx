@@ -6,25 +6,25 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yoto-ki.vercel.app"
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "YotoKi | Монгол хадмалтай аниме, кино",
+  title: "Lumi+ | Монгол хадмалтай аниме, кино",
   description: "Монгол хэрэглэгчдэд зориулсан хөнгөн, орчин үеийн аниме болон кино үзэх платформ.",
-  applicationName: "YotoKi",
+  applicationName: "Lumi+",
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: "/images/yotoki-icon-192.png",
-    apple: "/images/yotoki-icon-192.png"
+    icon: "/images/lumi-icon-192.png",
+    apple: "/images/lumi-icon-192.png"
   },
   openGraph: {
-    title: "YotoKi",
+    title: "Lumi+",
     description: "Монгол хадмалтай аниме, кино үзэх хөнгөн платформ.",
     url: siteUrl,
-    siteName: "YotoKi",
+    siteName: "Lumi+",
     images: [
       {
-        url: "/images/yotoki-logo.png",
-        width: 1024,
-        height: 1024,
-        alt: "YotoKi logo"
+        url: "/images/lumi-logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Lumi+ logo"
       }
     ],
     locale: "mn_MN",
@@ -32,9 +32,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "YotoKi",
+    title: "Lumi+",
     description: "Монгол хадмалтай аниме, кино үзэх хөнгөн платформ.",
-    images: ["/images/yotoki-logo.png"]
+    images: ["/images/lumi-logo.png"]
   }
 };
 

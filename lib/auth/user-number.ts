@@ -73,7 +73,7 @@ export async function ensureSupabaseUserNumber(supabase: SupabaseClient, user: U
     throw insert.error ?? new Error("Could not reserve a unique user number.");
   }
 
-  throw new Error("All YotoKi user IDs from #1 to #10000 are already taken.");
+  throw new Error("All Lumi+ user IDs from #1 to #10000 are already taken.");
 }
 
 function createCandidateNumbers() {

@@ -140,7 +140,7 @@ function ProfileForm({
           <UserRound size={28} />
         </div>
         <div className="min-w-0">
-          <h1 className="truncate text-3xl font-semibold tracking-tight text-white">{user.displayName || "YotoKi хэрэглэгч"}</h1>
+          <h1 className="truncate text-3xl font-semibold tracking-tight text-white">{user.displayName || "Lumi+ хэрэглэгч"}</h1>
           <p className="mt-1 truncate text-sm text-slate-400">{user.email}</p>
         </div>
       </div>

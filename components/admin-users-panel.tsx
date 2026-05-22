@@ -168,7 +168,7 @@ function UserRow({
   return (
     <div className="grid gap-3 px-4 py-4 md:grid-cols-[1fr_120px_170px] md:items-center">
       <div className="min-w-0">
-        <p className="truncate font-medium text-white">{user.displayName || "YotoKi хэрэглэгч"}</p>
+        <p className="truncate font-medium text-white">{user.displayName || "Lumi+ хэрэглэгч"}</p>
         <p className="mt-1 truncate text-sm text-slate-500">{user.email}</p>
       </div>
       <p className="font-mono text-sm text-teal-100">{formatPublicUserId(user.userNumber)}</p>

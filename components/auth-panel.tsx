@@ -71,7 +71,7 @@ export function AuthPanel({ initialMode }: { initialMode: AuthMode }) {
         </div>
 
         <h1 className="text-3xl font-semibold tracking-tight text-white">
-          {mode === "login" ? "YotoKi-д нэвтрэх" : "Шинэ хэрэглэгч үүсгэх"}
+          {mode === "login" ? "Lumi+-д нэвтрэх" : "Шинэ хэрэглэгч үүсгэх"}
         </h1>
         <p className="mt-2 text-sm leading-6 text-slate-400">
           Аккаунтаараа нэвтэрч үзэж байсан ангиа үргэлжлүүлээрэй.

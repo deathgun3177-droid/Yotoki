@@ -147,7 +147,7 @@ function claimAvailableLocalUserNumber() {
   const used = readUsedLocalUserNumbers();
 
   if (used.size >= maxUserNumber) {
-    throw new Error("All YotoKi user IDs from #1 to #10000 are already taken.");
+    throw new Error("All Lumi+ user IDs from #1 to #10000 are already taken.");
   }
 
   for (let attempt = 0; attempt < 40; attempt += 1) {
@@ -163,7 +163,7 @@ function claimAvailableLocalUserNumber() {
     }
   }
 
-  throw new Error("Could not reserve a YotoKi user ID.");
+  throw new Error("Could not reserve a Lumi+ user ID.");
 }
 
 function readUsedLocalUserNumbers() {

@@ -4,7 +4,7 @@ create table if not exists public.payment_settings (
   access_days integer not null default 30 check (access_days > 0),
   bank_name text not null default 'Khan Bank',
   account_number text not null default '5000000000',
-  account_name text not null default 'YotoKi',
+  account_name text not null default 'Lumi+',
   updated_at timestamptz not null default now()
 );
 

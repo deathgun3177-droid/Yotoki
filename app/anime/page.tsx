@@ -13,7 +13,7 @@ export default async function AnimePage() {
       <div className="mx-auto w-full max-w-7xl px-4 pb-[calc(4rem+env(safe-area-inset-bottom))] pt-6 sm:px-6 sm:pb-16 sm:pt-8 lg:px-8">
         <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm font-medium uppercase tracking-[0.22em] text-teal-200/70">YotoKi</p>
+            <p className="text-sm font-medium uppercase tracking-[0.22em] text-teal-200/70">Lumi+</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">Аниме</h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
               Монгол хадмалтай аниме гарчигууд.

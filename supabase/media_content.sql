@@ -84,13 +84,15 @@ values
 on conflict (id) do update set public = excluded.public;
 
 drop policy if exists "Public can read YotoKi media files" on storage.objects;
-create policy "Public can read YotoKi media files"
+drop policy if exists "Public can read Lumi+ media files" on storage.objects;
+create policy "Public can read Lumi+ media files"
 on storage.objects
 for select
 using (bucket_id in ('videos', 'subtitles', 'images'));
 
 drop policy if exists "Admins can upload YotoKi media files" on storage.objects;
-create policy "Admins can upload YotoKi media files"
+drop policy if exists "Admins can upload Lumi+ media files" on storage.objects;
+create policy "Admins can upload Lumi+ media files"
 on storage.objects
 for insert
 with check (
@@ -99,7 +101,8 @@ with check (
 );
 
 drop policy if exists "Admins can update YotoKi media files" on storage.objects;
-create policy "Admins can update YotoKi media files"
+drop policy if exists "Admins can update Lumi+ media files" on storage.objects;
+create policy "Admins can update Lumi+ media files"
 on storage.objects
 for update
 using (
@@ -112,7 +115,8 @@ with check (
 );
 
 drop policy if exists "Admins can delete YotoKi media files" on storage.objects;
-create policy "Admins can delete YotoKi media files"
+drop policy if exists "Admins can delete Lumi+ media files" on storage.objects;
+create policy "Admins can delete Lumi+ media files"
 on storage.objects
 for delete
 using (

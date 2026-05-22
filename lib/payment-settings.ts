@@ -12,7 +12,7 @@ export const defaultPaymentSettings: PaymentSettings = {
   accessDays: 30,
   bankName: "Khan Bank",
   accountNumber: "5000000000",
-  accountName: "YotoKi"
+  accountName: "Lumi+"
 };
 
 type PaymentSettingsRow = {
